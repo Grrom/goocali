@@ -16,11 +16,6 @@ export default class AuthHelper {
 
   private static instance: AuthHelper;
 
-  scopes: string[] = [
-    "https://www.googleapis.com/auth/fitness.activity.read",
-    "https://www.googleapis.com/auth/fitness.sleep.read",
-  ];
-
   private constructor() {
     const tokenDetails: TokenDetails = FileSystemHelper.getTokenDetails();
     const clientData: ClientData = FileSystemHelper.getClientData();
@@ -36,6 +31,11 @@ export default class AuthHelper {
       this.clientSecret,
       this.redirectUri
     );
+
+    this.oauth2Client.setCredentials({
+      refresh_token: tokenDetails.refreshToken,
+      access_token: tokenDetails.authToken,
+    });
   }
 
   static getInstance = (): AuthHelper => {
@@ -44,6 +44,13 @@ export default class AuthHelper {
       return this.instance;
     }
     return this.instance;
+  };
+
+  getAuth = (): OAuth2Client => {
+    if (!this.oauth2Client) {
+      throw "AuthHelper not initialized!";
+    }
+    return this.oauth2Client;
   };
 
   static needsToReInitializeToken = async () => {
@@ -87,24 +94,5 @@ export default class AuthHelper {
 
     FileSystemHelper.saveAuthToken(response.credentials);
     console.log("Auth token refreshed!");
-  };
-
-  exchangeAuthCodeForTokens = async (
-    authCode: string
-  ): Promise<Credentials> => {
-    let { tokens }: { tokens: Credentials } = await this.oauth2Client.getToken(
-      authCode
-    );
-    return tokens;
-  };
-
-  generateAuthLink = (): URL => {
-    const authorizationUrl = this.oauth2Client.generateAuthUrl({
-      access_type: "offline",
-      scope: this.scopes,
-      include_granted_scopes: true,
-    });
-
-    return new URL(authorizationUrl);
   };
 }
