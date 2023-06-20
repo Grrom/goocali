@@ -7,19 +7,15 @@ const main = async () => {
   let tokenDetails = FileSystemHelper.getTokenDetails();
   let authHelper = AuthHelper.getInstance();
 
-  if (await AuthHelper.needsToReInitializeToken()) {
-    tokenDetails = FileSystemHelper.getTokenDetails();
-    authHelper = AuthHelper.getInstance();
-  }
+  await AuthHelper.needsToReInitializeToken();
 
   listEvents(authHelper.getAuth());
 };
 
 async function listEvents(auth: OAuth2Client) {
-  console.log(auth);
   const calendar = google.calendar({ version: "v3", auth });
   const res = await calendar.events.list({
-    calendarId: "primary",
+    calendarId: FileSystemHelper.calendarId,
     timeMin: new Date().toISOString(),
     maxResults: 10,
     singleEvents: true,
