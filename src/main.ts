@@ -2,35 +2,37 @@ import FileSystemHelper from "./helpers/file-system-helper";
 import AuthHelper from "./helpers/auth-helper";
 import { google } from "googleapis";
 import { OAuth2Client } from "google-auth-library";
+import RequestHelper from "./helpers/request-helper";
 
 const main = async () => {
-  let tokenDetails = FileSystemHelper.getTokenDetails();
-  let authHelper = AuthHelper.getInstance();
-
-  await AuthHelper.needsToReInitializeToken();
-
-  listEvents(authHelper.getAuth());
+  console.log(
+    await RequestHelper.post(
+      new URL(
+        `https://www.googleapis.com/calendar/v3/calendars/${FileSystemHelper.calendarId}/events/watch`
+      ),
+      {
+        id: "goals_chanel",
+        type: "web_hook",
+        address: "http://localhost:4000/",
+      }
+    )
+  );
 };
 
-async function listEvents(auth: OAuth2Client) {
-  const calendar = google.calendar({ version: "v3", auth });
-  const res = await calendar.events.list({
+const listen = async () => {
+  const oauth2Client: OAuth2Client = AuthHelper.getInstance().getAuth();
+  const calendar = google.calendar({ version: "v3", auth: oauth2Client });
+  const res = await calendar.events.watch({
+    auth: oauth2Client,
     calendarId: FileSystemHelper.calendarId,
-    timeMin: new Date().toISOString(),
-    maxResults: 10,
-    singleEvents: true,
-    orderBy: "startTime",
+    requestBody: {
+      id: "goals_chanel",
+      type: "web_hook",
+      address: "https://c54f-175-176-23-37.ngrok-free.app/",
+    },
   });
-  const events = res.data.items;
-  if (!events || events.length === 0) {
-    console.log("No upcoming events found.");
-    return;
-  }
-  console.log("Upcoming 10 events:");
-  events.map((event, i) => {
-    const start = event.start!.dateTime || event.start!.date;
-    console.log(`${start} - ${event.summary}`);
-  });
-}
+  console.log(res);
+};
 
+listen();
 main();

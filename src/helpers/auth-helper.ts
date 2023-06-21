@@ -53,15 +53,16 @@ export default class AuthHelper {
     return this.oauth2Client;
   };
 
-  static needsToReInitializeToken = async () => {
+  static checkAndRefreshToken = async () => {
+    const instance = AuthHelper.getInstance();
     try {
-      switch (this.instance.checkTokenStatus()) {
+      switch (instance.checkTokenStatus()) {
         case tokenStatus.expired:
-          await this.instance.refreshAuthToken();
+          await instance.refreshAuthToken();
           console.log("Sync token refresh complete");
           return true;
         case tokenStatus.expiringSoon:
-          this.instance.refreshAuthToken().then(() => {
+          instance.refreshAuthToken().then(() => {
             console.log("Async token refresh complete");
           });
           return false;
