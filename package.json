@@ -39,7 +39,6 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "googleapis": "^105.0.0",
-    "node-fetch": "^2.6.11",
-    "winston": "^3.8.2"
+    "node-fetch": "^2.6.11"
   }
 }

@@ -1,6 +1,7 @@
+import RequestParams from "../types/request-params";
 import AuthHelper from "./auth-helper";
 import FileSystemHelper from "./file-system-helper";
-import fetch from "node-fetch";
+import fetch, { Response } from "node-fetch";
 
 export default class RequestHelper {
   private static getAuthToken = async () => {
@@ -8,17 +9,17 @@ export default class RequestHelper {
     return FileSystemHelper.getTokenDetails().authToken;
   };
 
-  public static async get<T>(url: URL): Promise<T> {
+  public static async get({ url }: RequestParams): Promise<Response> {
     const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${await this.getAuthToken()}`,
         "Content-Type": "application/json",
       },
     });
-    return await response.json();
+    return response;
   }
 
-  public static async post<T>(url: URL, body: object): Promise<T> {
+  public static async post({ url, body }: RequestParams): Promise<Response> {
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -27,10 +28,10 @@ export default class RequestHelper {
       },
       body: JSON.stringify(body),
     });
-    return await response.json();
+    return response;
   }
 
-  public static async put<T>(url: URL, body: object): Promise<T> {
+  public static async put({ url, body }: RequestParams): Promise<Response> {
     const response = await fetch(url, {
       method: "PUT",
       headers: {
@@ -42,7 +43,7 @@ export default class RequestHelper {
     return await response.json();
   }
 
-  public static async delete<T>(url: URL): Promise<T> {
+  public static async delete({ url }: RequestParams): Promise<Response> {
     const response = await fetch(url, {
       method: "DELETE",
     });

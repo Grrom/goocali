@@ -1,8 +1,8 @@
 import fs from "fs";
 import TokenDetails from "../types/token-details";
-import { Credentials } from "google-auth-library/build/src/auth/credentials";
 import dotenv from "dotenv";
 import ClientData from "../types/client-data";
+import { Credentials } from "google-auth-library";
 
 dotenv.config(); //turn this into a singleton and invoke once in constructor
 
@@ -10,6 +10,7 @@ export default class FileSystemHelper {
   private static readonly tokenDetailsPath =
     process.env.TOKEN_DETAILS_PATH ?? "token-details.json";
   static readonly calendarId = process.env.CALENDAR_ID ?? "";
+  static readonly receivingUrl = process.env.RECEIVING_URL ?? "";
 
   static getTokenDetails = (): TokenDetails => {
     const jsonString = fs.readFileSync(this.tokenDetailsPath, "utf8");

@@ -1,5 +1,5 @@
 import { google } from "googleapis";
-import { Credentials, OAuth2Client } from "google-auth-library";
+import { OAuth2Client } from "google-auth-library";
 import FileSystemHelper from "./file-system-helper";
 import tokenStatus from "../types/token-status";
 import TokenDetails from "../types/token-details";
