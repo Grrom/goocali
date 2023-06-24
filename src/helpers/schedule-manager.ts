@@ -1,4 +1,5 @@
 import CalendarSchedule from "../models/calendar-schedule";
+import GCalendarHelper from "./g-calendar-helper";
 
 export default class ScheduleManager {
   private static instance: ScheduleManager;
@@ -16,7 +17,7 @@ export default class ScheduleManager {
     return this.instance;
   }
 
-  saveJob(key: string, value: CalendarSchedule): void {
+  private saveJob(key: string, value: CalendarSchedule): void {
     this.schedules.set(key, value);
     console.log(`Saved job: ${key}`);
   }
@@ -29,7 +30,14 @@ export default class ScheduleManager {
     return schedule;
   }
 
-  cancelAllJobs() {
+  scheduleJobs = async () => {
+    const schedules = await GCalendarHelper.getCalendarSchedules();
+    schedules.forEach((schedule) => {
+      this.saveJob(schedule.title, schedule);
+    });
+  };
+
+  cancelJobs() {
     while (this.schedules.size > 0) {
       const [key, value] = this.schedules.entries().next().value;
       this.schedules.values().next().value.stopjobs();

@@ -1,3 +1,4 @@
+import { parse } from "dotenv";
 import CalendarSchedule from "../models/calendar-schedule";
 import FileSystemHelper from "./file-system-helper";
 import RequestHelper from "./request-helper";
@@ -48,14 +49,6 @@ export default class GCalendarHelper {
       console.log(error);
       throw error;
     }
-  };
-
-  static createJobs = async () => {
-    const schedules = await this.getCalendarSchedules();
-    schedules.forEach((schedule) => {
-      ScheduleManager.getInstance().saveJob(schedule.title, schedule);
-    });
-    ScheduleManager.getInstance().cancelAllJobs();
   };
 
   static getResource = async () => {

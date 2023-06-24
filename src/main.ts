@@ -1,15 +1,15 @@
-import GCalendarHelper from "./helpers/g-calendar-helper";
 import { Response, Request } from "express";
+import ScheduleManager from "./helpers/schedule-manager";
+import express from "express";
+import FileSystemHelper from "./helpers/file-system-helper";
 
-const express = require("express");
 const app = express();
-
-const PORT = 8000;
-
-GCalendarHelper.createJobs();
+const PORT = FileSystemHelper.port;
 
 app.post("/webhook", async (req: Request, res: Response) => {
   //TODO: restart watcher everyday using cronjob
+  ScheduleManager.getInstance().cancelJobs();
+  ScheduleManager.getInstance().scheduleJobs();
   res.sendStatus(200);
 });
 

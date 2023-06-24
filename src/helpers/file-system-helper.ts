@@ -11,6 +11,7 @@ export default class FileSystemHelper {
     process.env.TOKEN_DETAILS_PATH ?? "token-details.json";
   static readonly calendarId = process.env.CALENDAR_ID ?? "";
   static readonly receivingUrl = process.env.RECEIVING_URL ?? "";
+  static readonly port = process.env.PORT ?? 4000;
 
   static getTokenDetails = (): TokenDetails => {
     const jsonString = fs.readFileSync(this.tokenDetailsPath, "utf8");
