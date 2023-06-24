@@ -1,19 +1,28 @@
+import schedule, { Job } from "node-schedule";
+
 export default class CalendarSchedule {
   title: string;
   startTime: Date;
   endTime: Date;
+  eventStarting: Job;
+  eventEnding: Job;
 
   constructor(fromAPi: any) {
     this.title = fromAPi["summary"];
-    this.startTime = CalendarSchedule.isoStringToUTC8(
-      fromAPi["start"]["dateTime"]
-    );
-    this.endTime = CalendarSchedule.isoStringToUTC8(fromAPi["end"]["dateTime"]);
+    this.startTime = new Date(fromAPi["start"]["dateTime"]);
+    this.endTime = new Date(fromAPi["end"]["dateTime"]);
+
+    this.eventStarting = schedule.scheduleJob(this.startTime, () => {
+      console.log(`Event starting: ${this.title} ${this.startTime}`);
+    });
+
+    this.eventEnding = schedule.scheduleJob(this.endTime, () => {
+      console.log(`Event ending: ${this.title} ${this.endTime}`);
+    });
   }
 
-  private static isoStringToUTC8 = (isoString: string) => {
-    const date = new Date(isoString);
-    date.setHours(date.getHours() + 8);
-    return date;
-  };
+  stopjobs() {
+    this.eventStarting.cancel();
+    this.eventEnding.cancel();
+  }
 }

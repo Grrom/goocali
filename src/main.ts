@@ -6,9 +6,10 @@ const app = express();
 
 const PORT = 8000;
 
-GCalendarHelper.getCalendarSchedules();
+GCalendarHelper.createJobs();
 
 app.post("/webhook", async (req: Request, res: Response) => {
+  //TODO: restart watcher everyday using cronjob
   res.sendStatus(200);
 });
 

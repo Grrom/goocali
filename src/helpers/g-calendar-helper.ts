@@ -1,6 +1,8 @@
 import CalendarSchedule from "../models/calendar-schedule";
 import FileSystemHelper from "./file-system-helper";
 import RequestHelper from "./request-helper";
+import ScheduleManager from "./schedule-manager";
+import schedule, { Job } from "node-schedule";
 
 export default class GCalendarHelper {
   private constructor() {}
@@ -29,21 +31,32 @@ export default class GCalendarHelper {
     const timeMin = now.toISOString();
     const timeMax = endOfDay.toISOString();
 
-    const schedules = await RequestHelper.get({
-      url: new URL(
-        `https://www.googleapis.com/calendar/v3/calendars/${FileSystemHelper.calendarId}/events?timeMin=${timeMin}&timeMax=${timeMax}`
-      ),
-    });
+    try {
+      const schedules = await RequestHelper.get({
+        url: new URL(
+          `https://www.googleapis.com/calendar/v3/calendars/${FileSystemHelper.calendarId}/events?timeMin=${timeMin}&timeMax=${timeMax}`
+        ),
+      });
 
-    const parsedSchedules = await schedules.json();
-    const calendarSchedules = parsedSchedules.items.map(
-      (schedule: any) => new CalendarSchedule(schedule)
-    );
+      const parsedSchedules = await schedules.json();
+      const calendarSchedules = parsedSchedules.items.map((schedule: any) => {
+        return new CalendarSchedule(schedule);
+      });
 
-    return calendarSchedules;
+      return calendarSchedules;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   };
 
-  static assignJobs = async () => {};
+  static createJobs = async () => {
+    const schedules = await this.getCalendarSchedules();
+    schedules.forEach((schedule) => {
+      ScheduleManager.getInstance().saveJob(schedule.title, schedule);
+    });
+    ScheduleManager.getInstance().cancelAllJobs();
+  };
 
   static getResource = async () => {
     const resourceUri =
