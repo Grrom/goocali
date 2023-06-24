@@ -1,9 +1,6 @@
-import { parse } from "dotenv";
 import CalendarSchedule from "../models/calendar-schedule";
 import FileSystemHelper from "./file-system-helper";
 import RequestHelper from "./request-helper";
-import ScheduleManager from "./schedule-manager";
-import schedule, { Job } from "node-schedule";
 
 export default class GCalendarHelper {
   private constructor() {}
