@@ -3,15 +3,13 @@ import ScheduleManager from "./helpers/schedule-manager";
 import express from "express";
 import FileSystemHelper from "./helpers/file-system-helper";
 import GCalendarHelper from "./helpers/g-calendar-helper";
-import PubsubHelper from "./helpers/pubsub-helper";
 
 const app = express();
 const PORT = FileSystemHelper.port;
 
 app.post("/webhook", async (req: Request, res: Response) => {
   //TODO: restart watcher everyday at the end of sleep schedule
-  ScheduleManager.getInstance().cancelJobs();
-  ScheduleManager.getInstance().scheduleJobs();
+  ScheduleManager.getInstance().rescheduleJobs();
   res.sendStatus(200);
 });
 

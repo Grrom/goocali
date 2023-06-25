@@ -30,6 +30,15 @@ export default class ScheduleManager {
     return schedule;
   }
 
+  rescheduleJobs = async () => {
+    this.cancelJobs();
+    await this.scheduleJobs();
+    GCalendarHelper.watchCalendar();
+    console.log(
+      "-================== Rescheduled jobs and refreshed watcher ==================-"
+    );
+  };
+
   scheduleJobs = async () => {
     const schedules = await GCalendarHelper.getCalendarSchedules();
     schedules.forEach((schedule) => {

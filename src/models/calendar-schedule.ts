@@ -3,6 +3,7 @@ import PubsubHelper from "../helpers/pubsub-helper";
 import PubsubMessageParams, {
   ScheduleEventType,
 } from "../types/pubsub-message-params";
+import ScheduleManager from "../helpers/schedule-manager";
 
 export default class CalendarSchedule {
   title: string;
@@ -51,8 +52,19 @@ export default class CalendarSchedule {
     this.eventEnding = schedule.scheduleJob(this.endTime, () => {
       PubsubHelper.publishMessage(this.pubsubEndMessage());
       console.log(`Event ending: ${this.title} ${this.endTime}`);
+      this.handleEndingSchedule(this.title);
     });
 
     console.log(`Scheduled jobs: ${this.title}`);
+  }
+
+  handleEndingSchedule(schedule: string) {
+    switch (schedule) {
+      case "sleep":
+        ScheduleManager.getInstance().rescheduleJobs();
+        break;
+      default:
+        break;
+    }
   }
 }
