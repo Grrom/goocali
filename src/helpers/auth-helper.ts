@@ -1,4 +1,5 @@
 import { google } from "googleapis";
+import { exec } from "child_process";
 import { OAuth2Client } from "google-auth-library";
 import FileSystemHelper from "./file-system-helper";
 import tokenStatus from "../types/token-status";
@@ -46,23 +47,22 @@ export default class AuthHelper {
     return this.instance;
   };
 
-  getAuth = (): OAuth2Client => {
+  getGCalendarAuth = (): OAuth2Client => {
     if (!this.oauth2Client) {
       throw "AuthHelper not initialized!";
     }
     return this.oauth2Client;
   };
 
-  static checkAndRefreshToken = async () => {
-    const instance = AuthHelper.getInstance();
+  checkAndRefreshToken = async () => {
     try {
-      switch (instance.checkTokenStatus()) {
+      switch (this.checkTokenStatus()) {
         case tokenStatus.expired:
-          await instance.refreshAuthToken();
+          await this.refreshAuthToken();
           console.log("Sync token refresh complete");
           return true;
         case tokenStatus.expiringSoon:
-          instance.refreshAuthToken().then(() => {
+          this.refreshAuthToken().then(() => {
             console.log("Async token refresh complete");
           });
           return false;
@@ -95,5 +95,18 @@ export default class AuthHelper {
 
     FileSystemHelper.saveAuthToken(response.credentials);
     console.log("Auth token refreshed!");
+  };
+
+  getPubsubAuth = async (): Promise<string> => {
+    const command = "gcloud auth print-access-token";
+    return await new Promise((resolve, reject) => {
+      exec(command, (err, stdout, stderr) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(stdout.trim());
+        }
+      });
+    });
   };
 }

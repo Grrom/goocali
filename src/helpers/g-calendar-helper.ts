@@ -1,4 +1,5 @@
 import CalendarSchedule from "../models/calendar-schedule";
+import { AuthType } from "../types/request-params";
 import FileSystemHelper from "./file-system-helper";
 import RequestHelper from "./request-helper";
 
@@ -18,6 +19,7 @@ export default class GCalendarHelper {
         id: channelId,
         resourceId: resourceId,
       },
+      authType: AuthType.gcalendar,
     });
   };
 
@@ -34,6 +36,7 @@ export default class GCalendarHelper {
         url: new URL(
           `https://www.googleapis.com/calendar/v3/calendars/${FileSystemHelper.calendarId}/events?timeMin=${timeMin}&timeMax=${timeMax}`
         ),
+        authType: AuthType.gcalendar,
       });
 
       const parsedSchedules = await schedules.json();
@@ -53,6 +56,7 @@ export default class GCalendarHelper {
       "https://www.googleapis.com/calendar/v3/calendars/5e40d62696c3c0af6e74e5dc3c97521a1cc84f2ea5757eba38d9bcd3e9851271@group.calendar.google.com/events?alt=json";
     const resourceResponse = await RequestHelper.get({
       url: new URL(resourceUri),
+      authType: AuthType.gcalendar,
     });
     console.log(resourceResponse);
   };
@@ -77,6 +81,7 @@ export default class GCalendarHelper {
         type: "web_hook",
         address: FileSystemHelper.receivingUrl,
       },
+      authType: AuthType.gcalendar,
     });
 
     const parsedWatchResponse = await watchResponse.json();

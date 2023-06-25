@@ -33,6 +33,7 @@ export default class ScheduleManager {
   scheduleJobs = async () => {
     const schedules = await GCalendarHelper.getCalendarSchedules();
     schedules.forEach((schedule) => {
+      schedule.scheduleJobs();
       this.saveJob(schedule.title, schedule);
     });
   };
