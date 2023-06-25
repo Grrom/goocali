@@ -20,7 +20,8 @@ export default class PubsubHelper {
       authType: AuthType.pubsub,
     })
       .then((response) => {
-        console.log(response);
+        if (response.status === 200)
+          console.log(`Message ${params.title} published.`);
       })
       .catch((error) => {
         console.log(error);
