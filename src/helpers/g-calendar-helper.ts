@@ -80,6 +80,9 @@ export default class GCalendarHelper {
         id: todayChannelId,
         type: "web_hook",
         address: FileSystemHelper.receivingUrl,
+        params: {
+          ttl: 86400,
+        },
       },
       authType: AuthType.gcalendar,
     });
