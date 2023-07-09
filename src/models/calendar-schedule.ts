@@ -26,6 +26,7 @@ export default class CalendarSchedule {
       message: `Schedule starting: ${this.title}`,
       description: this.description,
       type: ScheduleEventType.starting,
+      topic: "send_alert",
     };
   }
 
@@ -35,6 +36,7 @@ export default class CalendarSchedule {
       message: `Schedule ending: ${this.title}`,
       description: this.description,
       type: ScheduleEventType.ending,
+      topic: "send_alert",
     };
   }
 
@@ -47,6 +49,7 @@ export default class CalendarSchedule {
     this.eventStarting = schedule.scheduleJob(this.startTime, () => {
       PubsubHelper.publishMessage(this.pubsubStartMessage());
       console.log(`Event starting: ${this.title} ${this.startTime}`);
+      this.handleStartingSchedule(this.title);
     });
 
     this.eventEnding = schedule.scheduleJob(this.endTime, () => {
@@ -56,6 +59,13 @@ export default class CalendarSchedule {
     });
 
     console.log(`Scheduled jobs: ${this.title}`);
+  }
+
+  handleStartingSchedule(schedule: string) {
+    switch (schedule) {
+      default:
+        break;
+    }
   }
 
   handleEndingSchedule(schedule: string) {

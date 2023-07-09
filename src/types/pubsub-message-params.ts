@@ -8,6 +8,7 @@ type PubsubMessageParams = {
   message?: string;
   description?: string;
   type: ScheduleEventType;
+  topic: string;
 };
 
 export { ScheduleEventType };

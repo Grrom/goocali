@@ -8,7 +8,6 @@ const app = express();
 const PORT = FileSystemHelper.port;
 
 app.post("/webhook", async (req: Request, res: Response) => {
-  //TODO: restart watcher everyday at the end of sleep schedule
   ScheduleManager.getInstance().rescheduleJobs();
   res.sendStatus(200);
 });

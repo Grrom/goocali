@@ -9,7 +9,7 @@ export default class PubsubHelper {
   static publishMessage = async (params: PubsubMessageParams) => {
     RequestHelper.post({
       url: new URL(
-        "https://pubsub.googleapis.com/v1/projects/personal-data-system/topics/schedule_starting:publish"
+        `https://pubsub.googleapis.com/v1/projects/personal-data-system/topics/${params.topic}:publish`
       ),
       body: {
         messages: [
